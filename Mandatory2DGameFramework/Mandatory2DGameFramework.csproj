@@ -7,8 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Update="GameConfig.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    <None Update="Config\GameConfig.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
 

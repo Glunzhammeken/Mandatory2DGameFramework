@@ -1,4 +1,5 @@
-﻿using Mandatory2DGameFramework.Configuration;
+﻿using Mandatory2DGameFramework.Config;
+using Mandatory2DGameFramework.Configuration;
 using Mandatory2DGameFramework.model.Cretures;
 using System;
 using System.Collections.Generic;
@@ -12,13 +13,13 @@ namespace Mandatory2DGameFramework.worlds
     /// Repræsenterer spillets 2D-verden og holder styr på alle objekter og væsener.
     /// Konfigureres via XML.
     /// </summary>
-    public class World
+    public class World : IWorld
     {
         // MaxX og MaxY indlæses fra XML. Private settere sikrer, at de kun kan ændres 
         // internt (typisk i konstruktøren).
         public int MaxX { get; private set; }
         public int MaxY { get; private set; }
-        public string CurrentGameLevel { get; private set; } // Henter GameLevel fra XML
+        public string CurrentGameLevel { get; private set; }
 
         // world objects
         private List<WorldObject> _worldObjects;
@@ -29,10 +30,10 @@ namespace Mandatory2DGameFramework.worlds
         /// Opretter en ny verden ved at indlæse dimensioner og spilniveau fra GameConfig.xml.
         /// Hvis indlæsningen fejler, bruges standardværdier.
         /// </summary>
-        public World()
+        public World(IGameConfigLoader gameConfigLoader)
         {
             // Indlæs konfiguration ved oprettelse (bruger den statiske loader)
-            var config = GameConfigLoader.LoadConfig();
+            var config = gameConfigLoader.LoadConfig();
 
             // Tildel værdier fra konfigurationen. Bruger fallback (80x40) hvis XML fejler.
             MaxX = config.MaxX > 0 ? config.MaxX : 80;
@@ -43,7 +44,7 @@ namespace Mandatory2DGameFramework.worlds
             _creatures = new List<Creature>();
         }
 
-        // Du kan også inkludere metoder til at tilføje/fjerne objekter her:
+        
 
         public void AddWorldObject(WorldObject obj)
         {

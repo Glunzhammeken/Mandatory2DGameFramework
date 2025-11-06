@@ -1,5 +1,6 @@
 ﻿using Mandatory2DGameFramework.model.attack;
 using Mandatory2DGameFramework.model.defence;
+
 using Mandatory2DGameFramework.worlds;
 using Mandatory2DGameFramework.Logger; // *** TILFØJET: For at bruge MyLogger i Operator Overload ***
 using System;
@@ -7,11 +8,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Mandatory2DGameFramework.Strategy;
 
 namespace Mandatory2DGameFramework.model.Cretures
 {
     // Creature er abstrakt for at understøtte Template Method
-    public abstract class Creature
+    public abstract class Creature : IAttackable
     {
         // OBSERVER: Eventen som Observers abonnerer på
         public event EventHandler<CreatureHitEventArgs>? CreatureWasHit;
@@ -96,7 +98,7 @@ namespace Mandatory2DGameFramework.model.Cretures
 
                 NotifyHit(damageToTake);
             }
-        }
+        }    
 
         // OBSERVER: Trigger metoden
         protected virtual void NotifyHit(int damageTaken)
@@ -126,11 +128,85 @@ namespace Mandatory2DGameFramework.model.Cretures
         }
 
 
-        // --- ØVRIGE METODER ---
+      
 
         public void Loot(WorldObject obj)
         {
-            throw new NotImplementedException();
+            // --- Trin 1: Validering ---
+            // Tjek om objektet overhovedet kan samles op
+            if (!obj.Lootable)
+            {
+                MyLogger.Instance.LogWarning($"{Name} forsøgte at loote {obj.Name}, men det er ikke lootable.");
+                return;
+            }
+
+            MyLogger.Instance.LogInfo($"{Name} looter {obj.Name}!");
+
+            // --- Trin 2: Type-tjek og Strategy-tildeling ---
+
+            // Er objektet et våben?
+            if (obj is AttackItem lootedWeapon)
+            {
+                // Ja. Nu vælger vi en ANGRIBS-STRATEGI baseret på våbnet.
+                // Vi bruger 'Range' til at beslutte, om det er Melee eller Ranged.
+                if (lootedWeapon.Range > 1)
+                {
+                    this.AttackStrategy = new RangedAttackStrategy(lootedWeapon);
+                    MyLogger.Instance.LogInfo($"{Name} har udstyret (Strategy): {lootedWeapon.Name} (Ranged).");
+                }
+                else
+                {
+                    this.AttackStrategy = new MeleeAttackStrategy(lootedWeapon);
+                    MyLogger.Instance.LogInfo($"{Name} har udstyret (Strategy): {lootedWeapon.Name} (Melee).");
+                }
+                return; // Vi er færdige
+            }
+
+            // Er objektet en rustning?
+            if (obj is DefenceItem lootedArmor)
+            {
+                // Ja. Nu håndterer vi FORSVARS-STRATEGIEN.
+                // Dette er mere komplekst pga. Composite-mønsteret.
+
+                // Scenarie 1: Vi har intet forsvar i forvejen.
+                if (this.DefenceStrategy == null)
+                {
+                    // Nemt: Vores nye rustning ER vores strategi.
+                    // (Dette virker, fordi DefenceItem implementerer IDefenceStrategy)
+                    this.DefenceStrategy = lootedArmor;
+                    MyLogger.Instance.LogInfo($"{Name} har udstyret sit første forsvar: {lootedArmor.Name}.");
+                }
+                // Scenarie 2: Vi har allerede en 'Composite' (en "samling" af rustning).
+                else if (this.DefenceStrategy is DefenceComposite composite)
+                {
+                    // Nemt: Vi tilføjer bare den nye rustning til samlingen.
+                    composite.AddDefence(lootedArmor);
+                    MyLogger.Instance.LogInfo($"{lootedArmor.Name} blev tilføjet til {Name}'s rustnings-sæt.");
+                }
+                // Scenarie 3: Vi har ét enkelt item (f.eks. et skjold), men IKKE en composite.
+                else
+                {
+                    // Vi skal nu opgradere til en composite!
+                    MyLogger.Instance.LogInfo($"{Name} opretter et rustnings-sæt for at bære flere dele...");
+
+                    // 1. Opret den nye "samling"
+                    var newCompositeSet = new DefenceComposite();
+
+                    // 2. Læg vores GAMLE item (skjoldet) i samlingen
+                    newCompositeSet.AddDefence(this.DefenceStrategy);
+
+                    // 3. Læg vores NYE item (støvlerne) i samlingen
+                    newCompositeSet.AddDefence(lootedArmor);
+
+                    // 4. Sæt "samlingen" som vores nye, aktive strategi
+                    this.DefenceStrategy = newCompositeSet;
+                }
+                return; // Vi er færdige
+            }
+
+            // Hvis det er et andet lootable item (f.eks. en Potion),
+            // kunne logikken tilføjes her.
+            MyLogger.Instance.LogWarning($"Genstand {obj.Name} blev lootet, men er en ukendt type.");
         }
 
         public override string ToString()

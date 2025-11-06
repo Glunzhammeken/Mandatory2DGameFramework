@@ -23,7 +23,7 @@ namespace Mandatory2DGameFramework.Strategy
             int baseDamage = _weapon.Hit;
             int finalDamage = (int)Math.Floor(baseDamage * 0.8);
 
-            // Vi kunne også implementere logik med _weapon.Range her.
+            
             return finalDamage;
         }
     }

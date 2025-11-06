@@ -1,23 +1,24 @@
 ﻿using System;
 using System.IO;
 using System.Xml.Linq;
-using Mandatory2DGameFramework.Logger; // For logging
+using Mandatory2DGameFramework.Config;
+using Mandatory2DGameFramework.Logger; 
 
 namespace Mandatory2DGameFramework.Configuration
 {
-    public static class GameConfigLoader
+    public  class GameConfigLoader : IGameConfigLoader
     {
         private const string ConfigFileName = "GameConfig.xml";
 
         /// <summary>
-        /// Loads game configuration from GameConfig.xml located in the app base directory.
+        /// Loader game configuration from XML file in root directory.
         /// Returns defaults on error.
         /// </summary>
-        public static (int MaxX, int MaxY, string GameLevel) LoadConfig()
+        public (int MaxX, int MaxY, string GameLevel) LoadConfig()
         {
             try
             {
-                // Resolve the config file from the application's base directory (bin folder)
+                
                 var baseDir = AppContext.BaseDirectory ?? Environment.CurrentDirectory;
                 var path = Path.Combine(baseDir, ConfigFileName);
 

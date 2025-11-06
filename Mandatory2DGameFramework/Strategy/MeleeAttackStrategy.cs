@@ -17,8 +17,7 @@ namespace Mandatory2DGameFramework.Strategy
 
         public int CalculateDamageBonus()
         {
-            // Simpel bonus: Våbnets Hit-værdi direkte.
-            // Kunne også inkludere Creature's styrke-statistik.
+            
             return _weapon.Hit;
         }
     }

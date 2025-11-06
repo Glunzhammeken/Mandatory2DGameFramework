@@ -30,8 +30,7 @@ namespace Mandatory2DGameFramework.model.defence
             // Reducer skaden, men sørg for, at resultatet ikke bliver negativt
             int remainingDamage = incomingDamage - ReduceHitPoint;
 
-            // Logning kan tilføjes her ved at bruge MyLogger.Instance.LogInfo(...)
-            // f.eks.: MyLogger.Instance.LogInfo($"DefenceItem '{Name}' reducerede {ReduceHitPoint} skade.");
+            
 
             return Math.Max(0, remainingDamage);
         }
