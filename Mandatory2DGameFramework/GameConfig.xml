@@ -1,0 +1,8 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<GameConfiguration>
+
+	<World MaxX="100" MaxY="50" Description="Den maksimale størrelse af spilverdenen." />
+
+	<Settings Level="Normal" StartGold="100" Description="Spilindstillinger." />
+
+</GameConfiguration>
