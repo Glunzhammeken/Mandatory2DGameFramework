@@ -16,25 +16,24 @@ namespace Mandatory2DGameFramework.Factory
         /// <returns>En ny WorldObject instans, eller null hvis typen er ukendt.</returns>
         public static WorldObject CreateObject(string objectType, string name, int value)
         {
-            // Normalt ville logikken for at vælge typen være mere avanceret,
-            // f.eks. baseret på XML-konfigurationer eller Enum.
+           
 
             switch (objectType.ToLower())
             {
                 case "sword":
                 case "axe":
-                    // Factory skaber AttackItem
+                    
                     return new AttackItem
                     {
                         Name = name,
                         Hit = value,
-                        Range = 1, // Standardværdi for tæt kamp
+                        Range = 1, 
                         Lootable = true
                     };
 
                 case "shield":
                 case "armor":
-                    // Factory skaber DefenceItem
+                    
                     return new DefenceItem
                     {
                         Name = name,
@@ -43,8 +42,7 @@ namespace Mandatory2DGameFramework.Factory
                     };
 
                 default:
-                    // Du kan eventuelt logge en fejl her ved hjælp af din MyLogger Singleton
-                    // MyLogger.Instance.LogError($"Ukendt WorldObject type forsøgt oprettet: {objectType}");
+                    
                     return null;
             }
         }
